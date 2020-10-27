@@ -20,7 +20,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        super.onCreate(savedInstanceState);
+        //super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         newsAdapter = new NewsAdapter(this, new ArrayList<Article>());
         ListView newsView = findViewById(R.id.list);
