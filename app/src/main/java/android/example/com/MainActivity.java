@@ -17,8 +17,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
 
-//import android.content.Loader;
-
 public class MainActivity extends AppCompatActivity implements
         LoaderManager.LoaderCallbacks<ArrayList<Article>> {
     public static final String GUARDIAN_API_URI = "https://content.guardianapis.com/search";
@@ -58,13 +56,9 @@ public class MainActivity extends AppCompatActivity implements
         newsView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                //Check what article was clicked
                 Article currentArticle = newsItemToViewAdapter.getItem(position);
-                //Convert webUrl to URI object
                 Uri uri = Uri.parse(currentArticle.getUrl());
-                //Create new intent using created uri
                 Intent openArticle = new Intent(Intent.ACTION_VIEW, uri);
-                //Start the intent to open article in a browser
                 startActivity(openArticle);
             }
         });

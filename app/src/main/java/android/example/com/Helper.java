@@ -1,7 +1,9 @@
 package android.example.com;
 
+import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -17,78 +19,80 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 
-public final class Utils {
+public final class Helper {
 
-    private final static String LOG_TAG = "["+Utils.class.getSimpleName()+"]";
-    private Utils(){
+    private final static String LOG_TAG = "[" + Helper.class.getSimpleName() + "]";
+
+    private Helper() {
 
     }
 
-    //Return URL object from String
-    private static URL createUrl(String stringUrl){
-        URL url=null;
-        try{
+
+    private static URL createUrl(String stringUrl) {
+        URL url = null;
+        try {
             url = new URL(stringUrl);
-        } catch (MalformedURLException e){
+        } catch (MalformedURLException e) {
             Log.e(LOG_TAG, "Error creating URL", e);
         }
         return url;
     }
-    //Make request to the given URL and return response as a String
-    public static String makeHttpRequest(URL url)throws IOException {
-        String jsonResponse = "" ;
-        //If URL is null, return early
-        if (jsonResponse == null){
+
+    public static String makeHttpRequest(Context context, URL url) throws IOException {
+        String jsonResponse = "";
+
+        if (jsonResponse == null) {
             return jsonResponse;
         }
         HttpURLConnection urlConnection = null;
         InputStream inputStream = null;
-        try{
+        try {
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setReadTimeout(10000);
             urlConnection.setConnectTimeout(15000);
             urlConnection.setRequestMethod("GET");
             urlConnection.connect();
-            //In case of successful request read input stream and parse response
-            if(urlConnection.getResponseCode() == 200){
+
+            if (urlConnection.getResponseCode() == 200) {
                 inputStream = urlConnection.getInputStream();
-                jsonResponse = readFromStream (inputStream);
-            }else{
+                jsonResponse = readFromStream(inputStream);
+            } else {
                 Log.e(LOG_TAG, "Error response code: " + urlConnection.getResponseCode());
+                Toast.makeText(context,
+                        "Error from Guardian API!",
+                        Toast.LENGTH_LONG)
+                        .show();
             }
-        }catch(IOException e){
+        } catch (IOException e) {
             Log.e(LOG_TAG, "Problem retrieving JSON response", e);
-        }finally{
-            if(urlConnection==null){
+        } finally {
+            if (urlConnection == null) {
                 urlConnection.disconnect();
             }
-            if(inputStream != null){
+            if (inputStream != null) {
                 inputStream.close();
             }
         }
         return jsonResponse;
     }
-    //Convert inputStream into String to read JSON response
-    private static String readFromStream(InputStream inputStream) throws IOException{
+
+    private static String readFromStream(InputStream inputStream) throws IOException {
         StringBuilder streamOutput = new StringBuilder();
-        if(inputStream != null){
+        if (inputStream != null) {
             InputStreamReader reader = new InputStreamReader(inputStream, Charset.forName("UTF-8"));
             BufferedReader buffer = new BufferedReader(reader);
             String line = buffer.readLine();
-            while(line != null){
+            while (line != null) {
                 streamOutput.append(line);
                 line = buffer.readLine();
             }
         }
         return streamOutput.toString();
     }
-    //Reference used for the below code:
-    // https://github.com/Yosolita1978/RankedFeedApp/blob/master/app/src/main/java/co/yosola/ranked/QueryUtils.java
-    //Return a list of Articles parsed from JSON
-    private static ArrayList<Article> extractDataFromJSON(String jsonResponse){
 
-        //If the JSON String is empty or null, return early
-        if (TextUtils.isEmpty(jsonResponse)){
+    private static ArrayList<Article> extractDataFromJSON(String jsonResponse) {
+
+        if (TextUtils.isEmpty(jsonResponse)) {
             return null;
         }
         ArrayList<Article> news = new ArrayList<>();
@@ -96,49 +100,46 @@ public final class Utils {
             JSONObject root = new JSONObject(jsonResponse);
             JSONObject info = root.getJSONObject("response");
             JSONArray results = info.getJSONArray("results");
-            //Loop through each article in the results array
-            for (int i=0; i< results.length(); i++){
-                //Get JSON Article object for position i
+
+            for (int i = 0; i < results.length(); i++) {
                 JSONObject article = results.getJSONObject(i);
-                //Extract webTitle for article title
+
                 String title = article.getString("webTitle");
-                //Extract sectionName for the name of section the article is published to
+
                 String section = article.getString("sectionName");
-                //Extract webUrl for web address of the article
+
                 String webUrl = article.getString("webUrl");
-                //Extract date when the article was published
-                String date = article.getString("webPublicationDate") ;
-                //Extract the name of the author of the article
+
+                String date = article.getString("webPublicationDate");
+
                 JSONArray tags = article.getJSONArray("tags");
                 String author = null;
-                if(tags.length()>=1){
+                if (tags.length() >= 1) {
                     JSONObject tag = tags.getJSONObject(0);
-                    author= "Author : "+ tag.optString("webTitle");
+                    author = "Author : " + tag.optString("webTitle");
                 }
 
-                Article articleItem = new Article(title, author, section,date, webUrl);
+                Article articleItem = new Article(title, author, section, date, webUrl);
                 news.add(articleItem);
             }
 
-        }catch (JSONException e){
+        } catch (JSONException e) {
             Log.e(LOG_TAG, "News API JSON cannot be parsed because of ", e);
         }
-        //Return the list of news
+
         return news;
     }
-    //**Reference used for the code below: QuakeReport app.
-    //Query Guardian and receive Article object representing single article on the given topic
-    public static ArrayList<Article> fetchNewsData (String requestUrl){
-        //Create URL object
+
+    public static ArrayList<Article> fetchNewsData(Context context, String requestUrl) {
+
         URL url = createUrl(requestUrl);
-        //Make HTTP request and receive JSON response
         String jsonResponse = null;
-        try{
-            jsonResponse = makeHttpRequest(url);
-        }catch (IOException e){
+        try {
+            jsonResponse = makeHttpRequest(context, url);
+        } catch (IOException e) {
             Log.e(LOG_TAG, "Error closing input stream", e);
         }
-        //Extract fields from JSON response and create Article object
+
         ArrayList<Article> news = extractDataFromJSON(jsonResponse);
         return news;
 
