@@ -7,34 +7,44 @@ public class Article {
     private String section;
     private String date;
     private String webUrl;
+    private final static String NO_AUTHOR_INFORMATION_FOUND = "No Info of Author Found";
 
     //Constructor
-    public Article(String localTitle, String localAuthor, String localSection, String localDate, String localWebUrl){
-        title=localTitle;
-        author=author;
-        section=section;
-        date=date;
-        webUrl=webUrl;
+    public Article(
+            String localTitle,
+            String localAuthor,
+            String localSection,
+            String localDate,
+            String localWebUrl
+    ) {
+        title = localTitle;
+        author = localAuthor;
+        section = localSection;
+        date = localDate;
+        webUrl = localWebUrl;
     }
 
     //Getters
-    public String getTitle(){
+    public String getTitle() {
         return title;
     }
 
-    public String getAuthor(){
+    public String getAuthor() {
+        if (author == null) {
+            return NO_AUTHOR_INFORMATION_FOUND;
+        }
         return author;
     }
 
-    public String getSection(){
+    public String getSection() {
         return section;
     }
 
-    public String getDate(){
+    public String getDate() {
         return date;
     }
 
-    public String getUrl(){
+    public String getUrl() {
         return webUrl;
     }
 }

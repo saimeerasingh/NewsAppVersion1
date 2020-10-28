@@ -2,7 +2,6 @@
     <string name="app_name">NewsApp</string>
     <string name="icon_info">Red folded newspaper icon</string>
     <string name="no_data">No articles found</string>
-    <string name="no_internet_connection">No internet connection</string>
     <string name="settings_title">News Settings</string>
     <string name="settings_menu_item">Settings</string>
     <string name="settings_section_label">Section</string>
@@ -15,4 +14,5 @@
     <string name="settings_order_by_newest_value" translatable="false">newest</string>
     <string name="settings_order_by_oldest_label">Oldest</string>
     <string name="settings_order_by_oldest_value" translatable="false">oldest</string>
+    <string name="no_internet_connection_found">no internet found</string>
 </resources>
