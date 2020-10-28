@@ -2,12 +2,14 @@ package android.example.com;
 
 import android.app.LoaderManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.Loader;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -17,7 +19,8 @@ import java.util.ArrayList;
 
 //import android.content.Loader;
 
-public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<ArrayList<Article>> {
+public class MainActivity extends AppCompatActivity implements
+        LoaderManager.LoaderCallbacks<ArrayList<Article>> {
     public static final String GUARDIAN_API_URI = "https://content.guardianapis.com/search";
     private static final int LOADER_ID = 1;
     private static final String API_KEY = "test";
@@ -31,13 +34,15 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        newsItemToViewAdapter = new NewsItemToViewAdapter(this, new ArrayList<Article>());
+        newsItemToViewAdapter = new NewsItemToViewAdapter(this,
+                new ArrayList<Article>());
         ListView newsView = findViewById(R.id.list);
         newsView.setAdapter(newsItemToViewAdapter);
         emptyView = (TextView) findViewById(R.id.empty_view);
         newsView.setEmptyView(emptyView);
 
-        ConnectivityManager manager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager manager = (ConnectivityManager)
+                getSystemService(Context.CONNECTIVITY_SERVICE);
 
         NetworkInfo networkInfo = manager.getActiveNetworkInfo();
 
@@ -50,6 +55,19 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             progressBar.setVisibility(View.GONE);
             emptyView.setText(R.string.no_internet_connection_found);
         }
+        newsView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                //Check what article was clicked
+                Article currentArticle = newsItemToViewAdapter.getItem(position);
+                //Convert webUrl to URI object
+                Uri uri = Uri.parse(currentArticle.getUrl());
+                //Create new intent using created uri
+                Intent openArticle = new Intent(Intent.ACTION_VIEW, uri);
+                //Start the intent to open article in a browser
+                startActivity(openArticle);
+            }
+        });
 
     }
 
@@ -79,4 +97,5 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     public void onLoaderReset(Loader<ArrayList<Article>> loader) {
 
     }
+
 }

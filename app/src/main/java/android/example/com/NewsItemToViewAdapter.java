@@ -18,15 +18,32 @@ public class NewsItemToViewAdapter extends ArrayAdapter<Article> {
 
     @Override
     public View getView(int position, View view, ViewGroup parent) {
-        View listitems = view;
-        if(null == listitems){
-            listitems = LayoutInflater.from(getContext()).inflate(R.layout.list_item, parent, false);
+        View listItems = view;
+        if(null == listItems){
+            listItems = LayoutInflater.from(getContext()).inflate(R.layout.list_item, parent, false);
         }
 
         Article currentArticle = getItem(position);
-        TextView section = (TextView) listitems.findViewById(R.id.section);
-        String sectionArticle = currentArticle.getSection();
-        section.setText(sectionArticle);
-        return listitems;
+        TextView section = (TextView) listItems.findViewById(R.id.section);
+        String sectionOfArticle = currentArticle.getSection();
+        section.setText(sectionOfArticle);
+
+        TextView title = (TextView) listItems.findViewById(R.id.title);
+        String titleOfArticle = currentArticle.getTitle();
+        title.setText(titleOfArticle);
+
+        TextView date = (TextView) listItems.findViewById(R.id.date);
+        String dateOfArticle = currentArticle.getDate();
+        date.setText(dateOfArticle);
+
+        TextView author = (TextView) listItems.findViewById(R.id.author);
+        String authorOfArticle = currentArticle.getAuthor();
+        author.setText(authorOfArticle);
+
+
+
+        return listItems;
     }
+
+
 }
